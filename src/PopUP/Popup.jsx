@@ -19,7 +19,7 @@ const Popup = ({ message, type, onClose, duration = 2000 }) => {
     overlay: {
       position: "fixed",
       top: "20px",
-      right: "20px",
+      // right: "20px",
       zIndex: 9999,
       pointerEvents: "none"
     },

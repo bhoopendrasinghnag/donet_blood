@@ -15,12 +15,44 @@ import lock from "../assets/lock.png";
 
 export const WelcomePage = () => {
   const navigate = useNavigate();
+  const [location, setLocation] = useState(null);
   const [openLogin, setOpenLogin] = useState(false);
   const [popup, setPopup] = useState({ msg: "", type: "" });
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      setPopup({ msg: "Geolocation not supported by your browser", type: "error" });
+      return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        setLocation({ lat, lng });
+
+        // console.log("Latitude:", lat);
+        // console.log("Longitude:", lng);
+        localStorage.setItem("userLocation", JSON.stringify({ lat, lng }));
+      },
+      (error) => {
+        if (error.code === 1) {
+          setPopup({
+            msg: "Please allow location access to find nearby blood donors.",
+            type: "error"
+          });
+        }
+      })
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,8 +72,6 @@ export const WelcomePage = () => {
       setPopup({ msg: "Connection error. Is the server running?", type: "error" });
     }
   };
-
-  useEffect(() => { }, [])
 
   const [updates] = useState([]);
   const [heroes] = useState([]);
@@ -92,7 +122,8 @@ export const WelcomePage = () => {
             <div className="find-donation-center">
               <h2>Find a Donation Center Near You</h2>
               <p>Browse our interactive map to find nearby blood banks and mobile donation drives.</p>
-              <button className="outline-btn">Find Centers</button>
+              
+              <button className="outline-btn" onClick={() => navigate("/search-map")}>Find Centers</button>
             </div>
           </div>
         </div>
@@ -170,9 +201,9 @@ export const WelcomePage = () => {
           <div className="footer-icon">
             <h4>Connect</h4>
             <div className="footer-logo">
-              <img className="social-icons" src={facebook} />
-              <img className="social-icons" src={instagram} />
-              <img className="social-icons" src={youtube} />
+              <img alt="" className="social-icons" src={facebook} />
+              <img alt="" className="social-icons" src={instagram} />
+              <img alt="" className="social-icons" src={youtube} />
             </div>
 
           </div>

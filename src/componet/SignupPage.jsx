@@ -7,6 +7,7 @@ import fetchVerifyNumberStatus from "../Connection/verifyNumber.jsx"
 import { Stepper, Step, StepLabel } from "@mui/material";
 import Popup from "../PopUP/Popup";
 import backButton from "../assets/left.png"
+import cancleButton from "../assets/remove.png"
 
 export const Signup = () => {
 
@@ -181,7 +182,6 @@ export const Signup = () => {
   // ================= PINCODE =================
   const handlePincodeChange = async (e) => {
     const pincode = e.target.value;
-
     if (!/^\d*$/.test(pincode)) return;
 
     setFormData((prev) => ({
@@ -280,9 +280,6 @@ export const Signup = () => {
     if (!formData.name.trim())
       return setPopup({ msg: "Enter full name", type: "error" });
 
-    if (!/\S+@\S+\.\S+/.test(formData.email))
-      return setPopup({ msg: "Enter valid email", type: "error" });
-
     if (formData.phone.length !== 10) {
       return setPopup({
         msg: "Enter valid 10 digit mobile number",
@@ -345,8 +342,32 @@ export const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.address) {
-      return setPopup({ msg: "Address must be needed", type: "error" });
+    if (!formData.gender || formData.gender === "Choose Gender") {
+      return setPopup({ msg: "Gender must be needed", type: "error" });
+    }
+
+    if (!formData.bloodGroup || formData.bloodGroup === "Blood Group") {
+      return setPopup({ msg: "Blood Group must be needed", type: "error" });
+    }
+
+    if (!formData.address.fulladdress) {
+      return setPopup({ msg: "Full Address must be needed", type: "error" });
+    }
+
+    if (!formData.address.city) {
+      return setPopup({ msg: "City must be needed", type: "error" });
+    }
+
+    if (!formData.address.district) {
+      return setPopup({ msg: "District must be needed", type: "error" });
+    }
+
+    if (!formData.address.state) {
+      return setPopup({ msg: "State must be needed", type: "error" });
+    }
+
+    if (!formData.address.pincode) {
+      return setPopup({ msg: "Pincode must be needed", type: "error" });
     }
 
     if (!formData.termsAccepted)
@@ -395,12 +416,12 @@ export const Signup = () => {
             {step === 1 && !otpSent && !otpVerified && (
 
               <div className="form-step">
-                <input name="name" placeholder="Full Name" onChange={handleBasicChange} />
-                <input name="email" placeholder="Email" onChange={handleBasicChange} />
-                <input name="password" type="password" placeholder="Password" onChange={handleBasicChange} />
-                <input name="confirmPassword" type="password" placeholder="Confirm Password" onChange={handleBasicChange} />
+                <input name="name" placeholder="Full Name" value={formData.name} onChange={handleBasicChange} />
+                <input name="email" placeholder="Email" value={formData.email} onChange={handleBasicChange} />
+                <input name="password" type="password" placeholder="Password" value={formData.password} onChange={handleBasicChange} />
+                <input name="confirmPassword" type="password" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleBasicChange} />
                 <input name="phone" type="tel" maxLength="10" minLength="10" inputMode="numeric" value={formData.phone} placeholder="Phone" onChange={handleMobileNumberChange} />
-                <input name="dob" type="date" onChange={handleBasicChange} />
+                <input name="dob" type="date" value={formData.dob} onChange={handleBasicChange} />
                 <div className="button-group">
                   <button type="button" className="back-btn" onClick={() => navigate("/")}><img src={backButton} alt="Back" /></button>
                   <button className="done-btn" type="button" onClick={handleSendOtp} disabled={loading}>
@@ -421,7 +442,7 @@ export const Signup = () => {
                   onChange={(e) => setOtp(e.target.value)}
                 />
                 <div className="button-group">
-                  <button type="button" className="back-btn" onClick={() => navigate("/")}>Cancle</button>
+                  <button type="button" className="back-btn" onClick={reSetState}><img src={cancleButton} alt="cancle"></img></button>
                   <button className="done-btn" type="button" onClick={handleVerifyOtp}> {loading ? "Verifying..." : "Verify OTP"}</button>
                 </div>
               </div>
@@ -430,60 +451,61 @@ export const Signup = () => {
             {/* ================= STEP 2 ================= */}
             {step === 3 && otpVerified && (
               <div className="form-step">
-                <select name="anyDisease" onChange={handleBasicChange} >
+                <select name="anyDisease" value={formData.anyDisease} onChange={handleBasicChange} >
                   <option value="No">Any Disease? - No</option>
                   <option value="Yes">Yes</option>
                 </select>
 
                 {formData.anyDisease === "Yes" && (
-                  <input name="diseaseDetails" placeholder="Disease Details" onChange={handleBasicChange} />
+                  <input name="diseaseDetails" value={formData.diseaseDetails}  placeholder="Disease Details" onChange={handleBasicChange} />
                 )}
 
-                <select name="isOnMedication" onChange={handleBasicChange}>
+                <select name="isOnMedication" value={formData.isOnMedication} onChange={handleBasicChange}>
                   <option value="No">On Medication? - No</option>
                   <option value="Yes">Yes</option>
                 </select>
 
                 {formData.isOnMedication === "Yes" && (
-                  <input name="medicationDetails" placeholder="Medication Details" onChange={handleBasicChange} />
+                  <input name="medicationDetails" value={formData.medicationDetails} placeholder="Medication Details" onChange={handleBasicChange} />
                 )}
 
-                <select name="hasAllergy" onChange={handleBasicChange}>
+                <select name="hasAllergy" value={formData.hasAllergy} onChange={handleBasicChange}>
                   <option value="No">Any Allergy? - No</option>
                   <option value="Yes">Yes</option>
                 </select>
 
                 {formData.hasAllergy === "Yes" && (
-                  <input name="allergyDetails" placeholder="Allergy Details" onChange={handleBasicChange} />
+                  <input name="allergyDetails" value={formData.allergyDetails} placeholder="Allergy Details" onChange={handleBasicChange} />
                 )}
 
-                <select name="recentSurgery" onChange={handleBasicChange}>
+                <select name="recentSurgery" value={formData.recentSurgery} onChange={handleBasicChange}>
                   <option value="No">Recent Surgery? - No</option>
                   <option value="Yes">Yes</option>
                 </select>
 
                 {formData.recentSurgery === "Yes" && (
-                  <input name="surgeryDetails" placeholder="Surgery Details" onChange={handleBasicChange} />
+                  <input name="surgeryDetails" value={formData.surgeryDetails} placeholder="Surgery Details" onChange={handleBasicChange} />
                 )}
 
-                <select name="covidVaccinated" onChange={handleBasicChange}>
+                <select name="covidVaccinated" value={formData.covidVaccinated} onChange={handleBasicChange}>
                   <option value="Yes">Covid Vaccinated - Yes</option>
                   <option value="No">No</option>
                 </select>
 
-                <select name="smoker" onChange={handleBasicChange}>
+                <select name="smoker" value={formData.smoker} onChange={handleBasicChange}>
                   <option value="No">Smoker - No</option>
                   <option value="Yes">Yes</option>
                 </select>
 
-                <select name="alcoholConsumption" onChange={handleBasicChange}>
+                <select name="alcoholConsumption" value={formData.alcoholConsumption} onChange={handleBasicChange}>
                   <option value="No">Alcohol Consumption - No</option>
                   <option value="Yes">Yes</option>
                 </select>
-                <input name="totalDonations" type="number" placeholder="Total Donations" onChange={handleBasicChange} />
+
+                <input name="totalDonations" value={formData.totalDonations} type="number" placeholder="Total Donations" onChange={handleBasicChange} />
 
                 {formData.totalDonations > 0 && (
-                  <input name="lastDonated" type="date" placeholder="Enter Your last Donated Date" onChange={handleLastDonatedChange} />
+                  <input name="lastDonated" value={formData.lastDonated} type="date" placeholder="Enter Your last Donated Date" onChange={handleLastDonatedChange} />
                 )}
 
                 <select name="availability" value={formData.availability} onChange={handleBasicChange} >
@@ -494,7 +516,7 @@ export const Signup = () => {
                 {formData.availability === "Available" && (
                   <p >
                     <input name="donationDate" type="date" placeholder="Enter Your last Donated Date" value={formData.donationDate} min={formData.nextEligibleDate} onChange={handleDonationDateChange} />
-                    You can donate again after {formData.nextEligibleDate}
+                    {/* You can donate again after {formData.nextEligibleDate} */}
                   </p>
                 )}
 
@@ -508,7 +530,8 @@ export const Signup = () => {
             {step === 4 && (
               <form onSubmit={handleSubmit} className="form-step">
 
-                <select name="gender" onChange={handleBasicChange}>
+                <select name="gender" value={formData.gender} placeholder="Gender" onChange={handleBasicChange}>
+                  <option>Choose Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
@@ -571,7 +594,7 @@ export const Signup = () => {
                   <option value="Lakshadweep">Lakshadweep</option>
                   <option value="Puducherry">Puducherry</option>
                 </select>
-                <input name="pincode" maxLength="6" inputMode="numeric" placeholder="Enter 6-digit Pincode" onChange={handlePincodeChange} />
+                <input name="pincode" maxLength="6" inputMode="numeric" value={formData.address.pincode} placeholder="Enter 6-digit Pincode" onChange={handlePincodeChange} />
 
                 <input name="emergencyContactName" placeholder="Emergency Contact Name" onChange={handleBasicChange} />
                 <input name="emergencyContactNumber" placeholder="Emergency Contact Number" onChange={handleBasicChange} />
@@ -587,9 +610,9 @@ export const Signup = () => {
                 </label>
 
                 <div className="button-group">
-                  <button type="button" className="back-btn" onClick={() => setStep(3)}><img alt="" src={backButton} />
+                  <button type="button" className="back-btn" onClick={()=>setStep(3)}><img alt="" src={backButton} />
                   </button>
-                  <button className="done-btn" type="submit">
+                  <button className="done-btn" onClick={handleSubmit} type="submit">
                     Complete Registration
                   </button>
                 </div>
